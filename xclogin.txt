@@ -1,9 +1,0 @@
-Request URL: https://zx.17zuoye.com/mstudent/XcUser/login
-Request Method: POST
-Origin: https://xcmicro.17zuoye.com
-Referer: https://xcmicro.17zuoye.com/pc/login.html
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36 Edg/81.0.416.64
-
-Form Data 
-user_id: xc062040074
-password: 1
