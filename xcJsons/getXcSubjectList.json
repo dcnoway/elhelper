@@ -1,0 +1,98 @@
+{
+    "success": true,
+    "data": [
+        {
+            "subjectIds": [
+                "132"
+            ],
+            "subjectName": "心灵万花筒",
+            "bookIds": [
+                "BK_13200004493791"
+            ]
+        },
+        {
+            "subjectIds": [
+                "101"
+            ],
+            "subjectName": "语文百花园",
+            "bookIds": [
+                "BK_10100004388826"
+            ]
+        },
+        {
+            "subjectIds": [
+                "102"
+            ],
+            "subjectName": "思维新天地",
+            "bookIds": [
+                "BK_10200004394231"
+            ]
+        },
+        {
+            "subjectIds": [
+                "103"
+            ],
+            "subjectName": "英语加油站",
+            "bookIds": [
+                "BK_10300004400142"
+            ]
+        },
+        {
+            "subjectIds": [
+                "131"
+            ],
+            "subjectName": "健康做两操",
+            "bookIds": [
+                "BK_12300004450131"
+            ]
+        },
+        {
+            "subjectIds": [
+                "115"
+            ],
+            "subjectName": "运动快乐多",
+            "bookIds": [
+                "BK_11400004432484"
+            ]
+        },
+        {
+            "subjectIds": [
+                "116",
+                "117",
+                "130"
+            ],
+            "subjectName": "艺苑风景线",
+            "bookIds": [
+                "BK_11300004420436",
+                "BK_11200004438843",
+                "BK_12200004426462"
+            ]
+        },
+        {
+            "subjectIds": [
+                "110",
+                "112",
+                "118",
+                "126"
+            ],
+            "subjectName": "巧手乐实践",
+            "bookIds": [
+                "BK_11100004405659",
+                "BK_11800004410310",
+                "BK_12100004475963",
+                "BK_11600004414450"
+            ]
+        },
+        {
+            "subjectIds": [
+                "125"
+            ],
+            "subjectName": "合格小公民",
+            "bookIds": [
+                "BK_11000004460118"
+            ]
+        }
+    ],
+    "message": "",
+    "error_code": 0
+}
