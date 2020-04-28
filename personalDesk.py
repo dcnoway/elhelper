@@ -31,7 +31,6 @@ for item in dbs.values():
     #     else:
     #         with zipfile.ZipFile(fileName,'r') as zf:
     #             zf.extractall('files/')
-
 #Make a personal portal contains all seminars and student task sheet links from bdschool and xcschool
 
 #raise up web browser to open the portal page
