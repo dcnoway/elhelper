@@ -1,5 +1,6 @@
 # coding=utf-8
 import requests
+import json
 import http.cookiejar as cookielib
 from seminar import Seminar
 
@@ -32,6 +33,8 @@ def xcLogin(account, password):
     print(f"text = {responseRes.text}")
     # 登录成功之后，将cookie保存在本地文件中，好处是，以后再去获取首页的时候，就不需要再走Login的流程了，因为已经从文件中拿到cookie了
     session.cookies.save()
+    #session.cookies.
+    print('Loged in, get cookies:',session.cookies)
 
 
 def isLogin():
@@ -43,12 +46,26 @@ def isLogin():
     # 第二个是allow_redirects，如果不设置，session访问时，服务器返回302，
     # 然后session会自动重定向到登录页面，获取到登录页面之后，变成200的状态码
     # allow_redirects = False  就是不允许重定向
+    url = "https://zx.17zuoye.com/mstudent/xcMicroLesson/getXcSubjectList"
+    resp = session.get(url,headers=header, allow_redirects=False)
+    if resp.ok:
+        jsonObj = json.loads(resp.content)
+        if jsonObj['success'] == True:
+            return True
+        else:
+            return False
+    else:
+        print("getXcSubjectList Http request fail!")
+        return False
+
+    '''
     responseRes = session.get(routeUrl, headers=header, allow_redirects=False)
     print(f"isLoginStatus = {responseRes.status_code}")
     if responseRes.status_code != 200:
         return False
     else:
         return True
+    '''
 
 '''
 1,Get all subject list   getXcSubjectList(): array of {"subjectIds":["132"],"subjectName":"心灵万花筒","bookIds":["BK_13200004493791"]}
@@ -57,31 +74,79 @@ def isLogin():
 4,Get video list of the given unit getVideoList(unit_ids: ["BKC_10300266278706"]): {"books":[{"id":"BK_10300004400142","seriesId":"BKC_10300263626216","name":"西城区微课-英语-四年级下学期","alias":"西城区微课-英语-四年级下学期","brief":null,"publisher":"一起科技","clazzLevel":4,"startClazzLevel":1,"termType":2,"imgUrl":"","ugcAuthor":"","bookType":"XICHENG","bookTypes":["XICHENG"],"latestVersion":1,"year":2020,"status":"ONLINE","subjectId":103,"shortName":"西城区微课-英语-四年级下学期","shortPublisher":"一起科技","publisherRank":84,"showLevels":[],"createdAt":"2020-02-13T19:03:03.392+08:00","updatedAt":"2020-04-12T16:25:40.586+08:00","deletedAt":null,"oldId":null,"extras":{"has_review_tag_on_m":false,"pronunciation":"美音","review_tag_name":"","open_exam":0},"online":true,"deletedTrue":false}],"units":[{"id":"BKC_10300266278706","name":"第十周","alias":"","brief":null,"subjectId":103,"rank":11,"nodeType":"UNIT","nodeAttr":0,"nodeLevel":3,"hasChild":false,"parentId":"BK_10300004400142","ancestors":[{"id":"BKC_10300263626216","nodeType":"SERIES","nodeLevel":"1"},{"id":"BK_10300004400142","nodeType":"BOOK","nodeLevel":"2"}],"printedCatalog":null,"page":null,"show":true,"shortName":"","createdAt":"2020-04-12T16:23:59.783+08:00","updatedAt":"2020-04-12T16:25:26.847+08:00","deletedAt":null,"oldTable":null,"oldId":null,"extras":[],"audioUrl":null,"lrcUrl":null,"deletedTrue":false}],"video_list":[{"id":"MC_10300009361327","subjectId":103,"name":"新标准四年级下册  Module 3 Unit 1 He shouted, \"Wolf, wolf!\"","courseDesc":"高佳","courseType":"EXPLAIN","coverUrl":"https://cdn-cnc.17zuoye.cn/fs-resource/5e9c6f9282393fa3c4bb3300.png","videoUrl":"https://v.17zuoye.cn/other/2020419/5e9c65c482393fa3c4bb2f77.mp4","videoSeconds":1375,"courseSummary":"","courseSeconds":1375,"regions":[{"provinceId":110000,"cityId":110100,"regionId":110102}],"unitId":"BKC_10300266278706","questionIds":[],"status":"ONLINE","orderNumber":1,"creatorId":"5a715303b1e48a284355926f","extras":[],"createdAt":"2020-04-19T23:35:01.221+08:00","updatedAt":"2020-04-20T08:34:02.646+08:00","deletedAt":null,"remark":"","openedAt":"2020-04-21T08:00:00.000+08:00","attachments":[{"url":"https://cdn-cnc.17zuoye.cn/fs-resource/5e9c6fa282393fa3c4bb331b.rar","name":"0421四年级英语(外研版)-Module 3 Unit 1 He shouted, Wolf, wolf!.rar"}],"notDeleted":true,"openStatus":1,"study_duration":1375},{"id":"MC_10300009364698","subjectId":103,"name":"新标准四年级下册  Module 3 Unit 2 Let's tell stories.","courseDesc":"高佳","courseType":"EXPLAIN","coverUrl":"https://cdn-cnc.17zuoye.cn/fs-resource/5e9c701782393fa3c4bb3353.png","videoUrl":"https://v.17zuoye.cn/ai_teacher/2020419/5e9c67f43cb75e11f943f9a3.mp4","videoSeconds":1188,"courseSummary":"","courseSeconds":1188,"regions":[{"provinceId":110000,"cityId":110100,"regionId":110102}],"unitId":"BKC_10300266278706","questionIds":[],"status":"ONLINE","orderNumber":2,"creatorId":"5a715303b1e48a284355926f","extras":[],"createdAt":"2020-04-19T23:37:18.920+08:00","updatedAt":"2020-04-20T08:34:23.132+08:00","deletedAt":null,"remark":"","openedAt":"2020-04-23T08:00:00.000+08:00","attachments":[{"url":"https://cdn-cnc.17zuoye.cn/fs-resource/5e9c702982393fa3c4bb3369.rar","name":"0423四年级英语(外研版)-Module 3 Unit 2 Let's tell stories!.rar"}],"notDeleted":true,"openStatus":1,"study_duration":1188},{"id":"MC_10300009368425","subjectId":103,"name":"新标准四年级下册 Revision 1 (Module 1 & Module 3)","courseDesc":"李云乔","courseType":"EXPLAIN","coverUrl":"https://cdn-cnc.17zuoye.cn/fs-resource/5e9c70a482393fa3c4bb33b2.png","videoUrl":"https://v.17zuoye.cn/ai_teacher/2020419/5e9c681f3cb75e11f943f9bb.mp4","videoSeconds":1431,"courseSummary":"","courseSeconds":1431,"regions":[{"provinceId":110000,"cityId":110100,"regionId":110102}],"unitId":"BKC_10300266278706","questionIds":[],"status":"ONLINE","orderNumber":3,"creatorId":"5a715303b1e48a284355926f","extras":[],"createdAt":"2020-04-19T23:39:55.708+08:00","updatedAt":"2020-04-20T08:34:42.068+08:00","deletedAt":null,"remark":"","openedAt":"2020-04-24T08:00:00.000+08:00","attachments":[{"url":"https://cdn-cnc.17zuoye.cn/fs-resource/5e9c70c53cb75e11f943fced.rar","name":"0424四年级英语(外研版)-Revision I (Module1&Module3).rar"}],"notDeleted":true,"openStatus":1,"study_duration":1419}]}
 '''
 def getXcSubjectList():
-    result = []
+    url = "https://zx.17zuoye.com/mstudent/xcMicroLesson/getXcSubjectList"
+    resp = session.get(url,headers=header)
+    if resp.ok:
+        jsonObj = json.loads(resp.content)
+        if jsonObj['success'] == True:
+            return jsonObj['data']
+        else:
+            print("getXcSubjectList fail:",jsonObj["message"])
+    else:
+        print("getXcSubjectList Http request fail!")
+    result = dict()
     return result
 
 def getUITree(bookIds):
-    result = []
+    url = "https://zx.17zuoye.com/mstudent/xcMicroLesson/getUITree"
+    # postData = {
+    #     "book_ids": '["BK_13200004493791"]',
+    # }    
+    jsonp =dict()
+    jsonp['book_Ids'] = bookIds
+    resp = session.post(url,headers=header,json=jsonp)
+    if resp.ok:
+        jsonObj = json.loads(resp.content)
+        if jsonObj['success'] == True:
+            return jsonObj['data']
+    result = dict()
     return result
 
 def getSubjectLastUnit(subjectIds):
-    result = []
+    url = "https://zx.17zuoye.com/mstudent/XcMicroLesson/getSubjectLastUnit"
+    postData = {
+        "subject_ids": subjectIds,
+    }    
+    resp = session.get(url,headers=header,data=postData)
+    if resp.ok:
+        jsonObj = json.loads(resp.content)
+        if jsonObj['success'] == True:
+            return jsonObj['data']
+    result = dict()
     return result
 
 def getVideoList(unitIds):
-    result = {}
+    url = "https://zx.17zuoye.com/mstudent/XcMicroLesson/getVideoList"
+    postData = {
+        "unit_ids": unitIds,
+    }    
+    resp = session.get(url,headers=header,data=postData)
+    if resp.ok:
+        jsonObj = json.loads(resp.content)
+        if jsonObj['success'] == True:
+            return jsonObj['data']
+    result = dict()
     return result
 
 def xcSchoolSeminars(date=''):
-    session.cookies.load()
+    #session.cookies.load()
+    #print('File cookies contents:',session.cookies)
     if not isLogin():
         # 从返回结果来看，有登录成功
         xcLogin("xc062040074", "184385")
-    if isLogin:
-        resp = session.get("https://xcmicro.17zuoye.com/pc/index.html",
-                           headers=header, allow_redirects=False)
+        #resp = session.get("https://xcmicro.17zuoye.com/pc/index.html",
+        #                   headers=header, allow_redirects=False)
+        subjectList = getXcSubjectList()
+        print(subjectList)
+        for subj in subjectList:
+            if subj['subjectIds'][0] == '103':
+                bookIds = subj['bookIds']
+                break
+        bookCourse = getUITree(bookIds)
+        print(bookCourse)
     result = {}
     return result
 
 if __name__ == "__main__":
+    #xcLogin("xc062040074", "184385")
     xcSchoolSeminars()
