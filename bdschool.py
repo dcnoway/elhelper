@@ -34,13 +34,18 @@ def bdschoolSeminars(grade,date):
             if len(val.xpath('./div[@class="content_table_td_subject"]')) != 0 and \
                 len(val.xpath('./a[@class="content_table_td_title"]/span[@class="conten_table_td_span_title"]')) != 0:
                 subject = val.xpath('./div[@class="content_table_td_subject"]')[0].text
+                if subject == '英语':
+                    continue
                 print(subject)
                 for a in val.xpath('./a[@class="content_table_td_title"]'):
                     sem = Seminar()
                     sem.subject =subject
                     sem.title = a.xpath('./span[@class="conten_table_td_span_title"]')[0].text
                     sem.videoUrl = a.xpath('./@href')[0]
-                    result[sem.title] =sem
+                    #if not sem.title in result:
+                    #    result[sem.title] = []
+                    #result[sem.title].append(sem)
+                    result[sem.title] = sem
                     print(sem.title)
                     print(sem.videoUrl)
             elif len(val.xpath('./a[@class="conten_table_td_span_title_download"]'))!=0:

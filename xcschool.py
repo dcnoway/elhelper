@@ -171,7 +171,6 @@ def xcSchoolSeminars(date=''):
         videoList = getVideoList(unitInfo['unit_ids'])
         #print(videoList)
         result = {}
-        result['英语']=[]
         for vi in videoList['video_list']:
             s = Seminar()
             s.title = vi['name']
@@ -179,7 +178,7 @@ def xcSchoolSeminars(date=''):
             s.homeworkUrl = vi['attachments'][0]['url']
             s.subject = '英语'
             s.homeworkName = vi['attachments'][0]['name']
-            result[s.subject].append(s)
+            result[s.title]=s
     return result
 
 if __name__ == "__main__":
