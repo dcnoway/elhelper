@@ -16,10 +16,25 @@ header = {
     'User-Agent': userAgent,
 }
 
+restHeader = {
+    "Accept": "application/json, text/plain, */*",
+    'User-Agent': userAgent,
+    #'Accept-Encoding': 'gzip, deflate, br',
+    #'Accept-Language': 'en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7',
+    #'Connection': 'keep-alive',
+    'Content-Type': 'application/x-www-form-urlencoded',
+    #'DNT': '1',
+    'Host': 'zx.17zuoye.com',
+    'Origin': 'https://xcmicro.17zuoye.com',
+    'Referer': 'https://xcmicro.17zuoye.com/pc/index.html',
+    #'Sec-Fetch-Dest': 'empty',
+    #'Sec-Fetch-Mode': 'cors',
+    #'Sec-Fetch-Site': 'same-site',
+}
 
 def xcLogin(account, password):
     # 模仿登录
-    print("开始模拟登录")
+    #print("开始模拟登录")
 
     postUrl = "https://zx.17zuoye.com/mstudent/XcUser/login"
     postData = {
@@ -29,12 +44,12 @@ def xcLogin(account, password):
     # 使用session直接post请求
     responseRes = session.post(postUrl, data=postData, headers=header)
     # 无论是否登录成功，状态码一般都是 statusCode = 200
-    print(f"statusCode = {responseRes.status_code}")
-    print(f"text = {responseRes.text}")
+    #print(f"statusCode = {responseRes.status_code}")
+    #print(f"text = {responseRes.text}")
     # 登录成功之后，将cookie保存在本地文件中，好处是，以后再去获取首页的时候，就不需要再走Login的流程了，因为已经从文件中拿到cookie了
     session.cookies.save()
     #session.cookies.
-    print('Loged in, get cookies:',session.cookies)
+    #print('Loged in, get cookies:',session.cookies)
 
 
 def isLogin():
@@ -75,7 +90,7 @@ def isLogin():
 '''
 def getXcSubjectList():
     url = "https://zx.17zuoye.com/mstudent/xcMicroLesson/getXcSubjectList"
-    resp = session.get(url,headers=header)
+    resp = session.get(url,headers=restHeader)
     if resp.ok:
         jsonObj = json.loads(resp.content)
         if jsonObj['success'] == True:
@@ -92,39 +107,46 @@ def getUITree(bookIds):
     # postData = {
     #     "book_ids": '["BK_13200004493791"]',
     # }    
-    jsonp =dict()
-    jsonp['book_Ids'] = bookIds
-    resp = session.post(url,headers=header,json=jsonp)
+    postData = 'book_ids='+json.dumps(bookIds)
+    resp = session.post(url,headers=restHeader,data=postData)
     if resp.ok:
         jsonObj = json.loads(resp.content)
         if jsonObj['success'] == True:
             return jsonObj['data']
+        else:
+            print(jsonObj['message'])
+    else:
+        print("getUITree http request fail!")
     result = dict()
     return result
 
 def getSubjectLastUnit(subjectIds):
     url = "https://zx.17zuoye.com/mstudent/XcMicroLesson/getSubjectLastUnit"
-    postData = {
-        "subject_ids": subjectIds,
-    }    
-    resp = session.get(url,headers=header,data=postData)
+    postData = "subject_ids="+json.dumps(subjectIds)
+    resp = session.post(url,headers=restHeader,data=postData)
     if resp.ok:
         jsonObj = json.loads(resp.content)
         if jsonObj['success'] == True:
             return jsonObj['data']
+        else:
+            print(jsonObj['message'])
+    else:
+        print("getUITree http request fail!")            
     result = dict()
     return result
 
 def getVideoList(unitIds):
     url = "https://zx.17zuoye.com/mstudent/XcMicroLesson/getVideoList"
-    postData = {
-        "unit_ids": unitIds,
-    }    
-    resp = session.get(url,headers=header,data=postData)
+    postData = "unit_ids="+json.dumps(unitIds)
+    resp = session.post(url,headers=restHeader,data=postData)
     if resp.ok:
         jsonObj = json.loads(resp.content)
         if jsonObj['success'] == True:
             return jsonObj['data']
+        else:
+            print(jsonObj['message'])
+    else:
+        print("getUITree http request fail!")            
     result = dict()
     return result
 
@@ -137,16 +159,31 @@ def xcSchoolSeminars(date=''):
         #resp = session.get("https://xcmicro.17zuoye.com/pc/index.html",
         #                   headers=header, allow_redirects=False)
         subjectList = getXcSubjectList()
-        print(subjectList)
+        #print(subjectList)
         for subj in subjectList:
             if subj['subjectIds'][0] == '103':
                 bookIds = subj['bookIds']
                 break
         bookCourse = getUITree(bookIds)
-        print(bookCourse)
-    result = {}
+        #print(bookCourse)
+        unitInfo = getSubjectLastUnit(['103'])
+        #print(unitInfo)
+        videoList = getVideoList(unitInfo['unit_ids'])
+        #print(videoList)
+        result = {}
+        result['英语']=[]
+        for vi in videoList['video_list']:
+            s = Seminar()
+            s.title = vi['name']
+            s.videoUrl = vi['videoUrl']
+            s.homeworkUrl = vi['attachments'][0]['url']
+            s.subject = '英语'
+            s.homeworkName = vi['attachments'][0]['name']
+            result[s.subject].append(s)
     return result
 
 if __name__ == "__main__":
     #xcLogin("xc062040074", "184385")
-    xcSchoolSeminars()
+    s = xcSchoolSeminars()
+    for sitem in s['英语']:
+        print(sitem)
