@@ -1,7 +1,6 @@
-# coding=GBK
+# coding=utf-8
 import time
 import zipfile
-#from unzipmbcs import extractZip
 import requests
 import os
 from bdschool import bdschoolSeminars
@@ -11,7 +10,12 @@ import re
 
 def findTaskSheetPath(indexFilePath):
     #MAKE SURE YOU ARE UNDER GBK encoding editor!!!!
-    pattern = 'ÈÎÎñµ¥.(docx|pdf)'
+    #remove GBK encoding pattern string from source code
+    #load GBK encoding pattern string from GBK encoding txt file
+    #for source code edit convinences
+    with open('taskptn.txt','r') as f:
+        pattern = f.readline()
+
     passPtn = '__MACOSX'
     with open(indexFilePath,'r') as f:
         readlines = f.readlines()
@@ -52,7 +56,7 @@ def main():
             with open(fileName, 'wb') as f:
                 f.write(res.content)
         
-        os.system('7z x -ofiles -aos "'+fileName+'"')
+        os.system('7z x -ofiles -aos "'+fileName+'" >>null')
         os.system('7z l "'+fileName+'" >"'+fileName+'.idx"')
 
         #search for task sheet file path in idx file
