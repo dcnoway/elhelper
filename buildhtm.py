@@ -16,15 +16,19 @@ def buildHtml(seminars):
         title.set("href",item.videoUrl)
         title.text = item.title
         td.append(title)
+        td.append(lxml.etree.Element("br"))
         homework = lxml.etree.Element("a")
-        homework.set("href",item.homeworkUrl)
+        homework.set("href",item.homeworkTaskSheet)
         homework.text = "学习任务单"
         td.append(homework)
         tr.append(td)
     lxml.etree.tostring(table)
-    date = time.strftime("%d%d",time.localtime())
+    date = time.strftime("%m%d",time.localtime())
     filename = date + "index.html"
     print(lxml.etree.tostring(table))
-    # with open(filename,"w") as f:
-    #     f.write(lxml.etree.tostring(table,encoding='utf-8'))
+    with open(filename,"wb") as f:
+        f.write(lxml.etree.tostring(table,encoding='utf-8'))
     return filename
+
+
+#if __name__ == '__main__':

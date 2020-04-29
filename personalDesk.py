@@ -1,4 +1,4 @@
-# coding=utf-8
+# coding=GBK
 import time
 import zipfile
 from unzipmbcs import extractZip
@@ -7,7 +7,7 @@ import os
 from bdschool import bdschoolSeminars
 from xcschool import xcSchoolSeminars
 from buildhtm import buildHtml
-import webbrowser
+import re
 grade =4
 date = time.localtime()
 dbs = bdschoolSeminars(grade,date)
@@ -27,17 +27,30 @@ for item in dbs.values():
         with open(fileName, 'wb') as f:
             f.write(res.content)
     
-    os.system('7z x -ofiles "'+fileName+'"')
-    # if zipfile.is_zipfile(fileName):
-    #     if item.subject == '鑻辫':
-    #         extractZip(fileName,'utf-8')
-    #     else:
-    #         with zipfile.ZipFile(fileName,'r') as zf:
-    #             zf.extractall('files/')
+    os.system('7z x -ofiles -aos "'+fileName+'"')
+    os.system('7z l "'+fileName+'" >"'+fileName+'.idx"')
+
+    #search for task sheet file path in idx file
+    pattern = '学习任务单.(docx|pdf)'
+    with open(fileName+'.idx','r') as f:
+        readline = f.readline()
+        finded = re.findall(pattern,readline)
+        if len(finded) > 0:
+            readline = readline[25:].lstrip(' ')
+            i = readline.find(' ')
+            readline = readline[i:].lstrip(' ')
+            i = readline.find(' ')
+            readline = readline[i:].lstrip(' ')
+            print(readline)
+    item.homeworkTaskSheet = readline
+
+
+
 #Make a personal portal contains all seminars and student task sheet links from bdschool and xcschool
 mainpage = buildHtml(dbs.values())
 #raise up web browser to open the portal page
 #webbrowser.open_new("file://./"+mainpage)
 #webbrowser.WindowsDefault.open_new(url = "file://./"+mainpage)
 #webbrowser.Chrome.open_new(url = "file://./"+mainpage)
-webbrowser.open_new(url = "file://./"+mainpage)
+#webbrowser.open_new(url = "file://./"+mainpage)
+os.startfile(mainpage)
