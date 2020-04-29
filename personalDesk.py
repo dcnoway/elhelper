@@ -28,7 +28,7 @@ def findTaskSheetPath(indexFilePath):
             readline = readline[i:].lstrip(' ')
             i = readline.find(' ')
             readline = readline[i:].lstrip(' ')
-            print(readline)
+            #print(readline)
             return readline
     raise Exception('Can not find task sheet fild path')
 
@@ -41,7 +41,7 @@ def main():
 
     #Download all homework packages to local folder and unzip it
     for item in dbs.values():
-        print(item)
+        #print(item)
         res = requests.get(item.homeworkUrl,verify=False)
         if len(item.homeworkName) == 0:
             fileName = os.path.basename(item.homeworkUrl)
