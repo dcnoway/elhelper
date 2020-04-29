@@ -6,6 +6,8 @@ import requests
 import os
 from bdschool import bdschoolSeminars
 from xcschool import xcSchoolSeminars
+from buildhtm import buildHtml
+import webbrowser
 grade =4
 date = time.localtime()
 dbs = bdschoolSeminars(grade,date)
@@ -21,8 +23,9 @@ for item in dbs.values():
     else:
         fileName = item.homeworkName
     fileName = 'files/'+fileName
-    with open(fileName, 'wb') as f:
-        f.write(res.content)
+    if not os.path.exists(fileName):
+        with open(fileName, 'wb') as f:
+            f.write(res.content)
     
     os.system('7z x -ofiles "'+fileName+'"')
     # if zipfile.is_zipfile(fileName):
@@ -32,5 +35,9 @@ for item in dbs.values():
     #         with zipfile.ZipFile(fileName,'r') as zf:
     #             zf.extractall('files/')
 #Make a personal portal contains all seminars and student task sheet links from bdschool and xcschool
-
+mainpage = buildHtml(dbs.values())
 #raise up web browser to open the portal page
+#webbrowser.open_new("file://./"+mainpage)
+#webbrowser.WindowsDefault.open_new(url = "file://./"+mainpage)
+#webbrowser.Chrome.open_new(url = "file://./"+mainpage)
+webbrowser.open_new(url = "file://./"+mainpage)
