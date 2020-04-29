@@ -37,6 +37,9 @@ def findTaskSheetPath(indexFilePath):
     raise Exception('Can not find task sheet fild path')
 
 def main():
+    if not (os.path.exists('files') and os.path.isdir('files')):
+        os.path.mkdir('files')
+        
     grade =4
     date = time.localtime()
     dbs = bdschoolSeminars(grade,date)
