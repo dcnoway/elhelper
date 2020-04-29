@@ -56,7 +56,7 @@ def main():
             with open(fileName, 'wb') as f:
                 f.write(res.content)
         
-        os.system('7z x -ofiles -aos "'+fileName+'" >>null')
+        os.system('7z x -ofiles -aos "'+fileName+'" >>nul')
         os.system('7z l "'+fileName+'" >"'+fileName+'.idx"')
 
         #search for task sheet file path in idx file
