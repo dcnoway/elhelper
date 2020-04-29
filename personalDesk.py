@@ -10,6 +10,7 @@ from buildhtm import buildHtml
 import re
 
 def findTaskSheetPath(indexFilePath):
+    #MAKE SURE YOU ARE UNDER GBK encoding editor!!!!
     pattern = 'ÈÎÎñµ¥.(docx|pdf)'
     passPtn = '__MACOSX'
     with open(indexFilePath,'r') as f:
@@ -60,12 +61,7 @@ def main():
     #Make a personal portal contains all seminars and student task sheet links from bdschool and xcschool
     mainpage = buildHtml(dbs.values())
     #raise up web browser to open the portal page
-    #webbrowser.open_new("file://./"+mainpage)
-    #webbrowser.WindowsDefault.open_new(url = "file://./"+mainpage)
-    #webbrowser.Chrome.open_new(url = "file://./"+mainpage)
-    #webbrowser.open_new(url = "file://./"+mainpage)
     os.startfile(mainpage)
 
 if __name__ == '__main__':
     main()
-    #findTaskSheetPath('files/b.idx')
