@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 *.cookies
 files/
+*.html
 
 # C extensions
 *.so
