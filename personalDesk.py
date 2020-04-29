@@ -1,7 +1,7 @@
 # coding=GBK
 import time
 import zipfile
-from unzipmbcs import extractZip
+#from unzipmbcs import extractZip
 import requests
 import os
 from bdschool import bdschoolSeminars

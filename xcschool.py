@@ -68,7 +68,7 @@ def login():
             xcLogin(usrname, passwd)
             if isLogin():
                 with open(acntpath,'w') as f:
-                    f.writelines([usrname,passwd])
+                    f.writelines([usrname+'\n',passwd])
                 break
             else:
                 print('用户名密码错误，请重新输入！')
