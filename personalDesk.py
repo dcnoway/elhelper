@@ -3,6 +3,7 @@ import time
 import zipfile
 import requests
 import os
+import sys
 from bdschool import bdschoolSeminars
 from xcschool import xcSchoolSeminars
 from buildhtm import buildHtml
@@ -59,7 +60,15 @@ def main():
     if os.system('7z>nul')!=0:
         print('Please install 7-Zip and make sure 7z.exe is in the PATH.')
         
-    grade =4
+    if len(sys.argv) <2:
+        grade =4
+    elif len(sys.argv) == 2:
+        try:
+            grade = int(sys.argv[1])
+        except TypeError:
+            print('第一个参数应为数字，表示获取几年级的当日网课')
+            return
+
     date = time.localtime()
     dbs = bdschoolSeminars(grade,date)
     xcs = xcSchoolSeminars()
