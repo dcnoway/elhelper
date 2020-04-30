@@ -3,6 +3,11 @@ import os
 import lxml
 import time
 
+def htmlPath():
+    date = time.strftime("%m%d",time.localtime())
+    filename = date + "index.html"
+    return filename
+
 def buildHtml(seminars):
     table = lxml.etree.Element("table")
     tr = lxml.etree.Element("tr")
@@ -23,8 +28,8 @@ def buildHtml(seminars):
         td.append(homework)
         tr.append(td)
     lxml.etree.tostring(table)
-    date = time.strftime("%m%d",time.localtime())
-    filename = date + "index.html"
+    #date = time.strftime("%m%d",time.localtime())
+    filename = htmlPath()
     print(lxml.etree.tostring(table))
     with open(filename,"wb") as f:
         f.write(lxml.etree.tostring(table,encoding='utf-8'))

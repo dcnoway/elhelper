@@ -2,6 +2,8 @@
 import requests
 import json
 import time
+# import certifi
+# import urllib3
 from lxml import etree
 from seminar import Seminar
 '''
@@ -14,9 +16,17 @@ def bdschoolSeminars(grade,date):
     wday = date.tm_wday
     week_index = time.strftime("%U",date)
 
+    # http = urllib3.PoolManager(
+    #     cert_reqs='CERT_REQUIRED',
+    #     ca_certs=certifi.where())
+    # resp = http.request('GET',urlCurrentSchedule.format(grade=grade,yyyyMMdd=time.strftime("%Y/%m/%d",date)))
     resp = requests.get(
         url=urlCurrentSchedule.format(grade=grade,yyyyMMdd=time.strftime("%Y/%m/%d",date)),
         verify = False)
+    # session = requests.Session()
+    # resp = session.post(urlCurrentSchedule.\
+    #     format(grade=grade,yyyyMMdd=time.strftime("%Y/%m/%d",date)))
+
     if(resp.ok):
         resp.encoding='utf-8'
         html = etree.HTML(resp.text)
