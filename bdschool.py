@@ -2,8 +2,7 @@
 import requests
 import json
 import time
-# import certifi
-# import urllib3
+import urllib3
 from lxml import etree
 from seminar import Seminar
 '''
@@ -24,11 +23,8 @@ def bdschoolSeminars(grade,date):
         'User-Agent': userAgent,
     }
 
-    # http = urllib3.PoolManager(
-    #     cert_reqs='CERT_REQUIRED',
-    #     ca_certs=certifi.where())
     session = requests.Session()
-    requests.packages.urllib3.disable_warnings()
+    urllib3.disable_warnings()
     resp = session.get(url = urlCurrentSchedule,\
             headers=header,verify=False)
 
@@ -50,7 +46,6 @@ def bdschoolSeminars(grade,date):
                 subject = val.xpath('./div[@class="content_table_td_subject"]')[0].text
                 if subject == '英语':
                     continue
-                #print(subject)
                 for a in val.xpath('./a[@class="content_table_td_title"]'):
                     sem = Seminar()
                     sem.subject =subject
@@ -59,20 +54,13 @@ def bdschoolSeminars(grade,date):
                     #bypass 北京版数学教学视频
                     if sem.title.find('北京版') > -1 and sem.subject =='数学':
                         continue
-                    #if not sem.title in result:
-                    #    result[sem.title] = []
-                    #result[sem.title].append(sem)
                     result[sem.title] = sem
-                    #print(sem.title)
-                    #print(sem.videoUrl)
             elif len(val.xpath('./a[@class="conten_table_td_span_title_download"]'))!=0:
                 for a in val.xpath('./a[@class="conten_table_td_span_title_download"]'):
                     title =a.xpath('./span[@class="conten_table_td_span_title"]')[0].text
                     if title.find('北京版') > -1:
                         continue
-                    #print(title)
                     result[title].homeworkUrl = a.xpath('./@href')[0]
-                    #print(result[title].homeworkUrl)
     return result
 
 if __name__ == '__main__':

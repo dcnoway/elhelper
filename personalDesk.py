@@ -12,8 +12,6 @@ import re
 
 
 def findTaskSheetPath(indexFilePath):
-    #MAKE SURE YOU ARE UNDER GBK encoding editor!!!!
-    #remove GBK encoding pattern string from source code
     #load GBK encoding pattern string from GBK encoding txt file
     #for source code edit convinences
     with open('taskptn.txt','r') as f:
@@ -35,7 +33,6 @@ def findTaskSheetPath(indexFilePath):
             readline = readline[i:].lstrip(' ')
             i = readline.find(' ')
             readline = readline[i:].lstrip(' ')
-            #print(readline)
             return readline
     raise Exception('Can not find task sheet fild path')
 

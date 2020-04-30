@@ -28,12 +28,7 @@ def buildHtml(seminars):
         td.append(homework)
         tr.append(td)
     lxml.etree.tostring(table)
-    #date = time.strftime("%m%d",time.localtime())
     filename = htmlPath()
-    #print(lxml.etree.tostring(table))
     with open(filename,"wb") as f:
         f.write(lxml.etree.tostring(table,encoding='utf-8'))
     return filename
-
-
-#if __name__ == '__main__':
