@@ -9,8 +9,6 @@ from xcschool import xcSchoolSeminars
 from buildhtm import buildHtml
 from buildhtm import htmlPath
 import re
-# import certifi
-# import urllib3
 
 
 def findTaskSheetPath(indexFilePath):
@@ -51,7 +49,7 @@ def fixIllegalPath(indexFilePath:str):
 
 def main():
     if not (os.path.exists('files') and os.path.isdir('files')):
-        os.path.mkdir('files')
+        os.mkdir('files')
 
     if os.path.exists(htmlPath()) and os.path.isfile(htmlPath()):
         os.startfile(htmlPath())
@@ -70,20 +68,21 @@ def main():
             return
 
     date = time.localtime()
+    print('Downloading bdschool.cn seminar index...')
     dbs = bdschoolSeminars(grade,date)
+    print('Downloading xcmicro.17zuoye.com seminar index...')
     xcs = xcSchoolSeminars()
     dbs.update(xcs)
 
     #Download all homework packages to local folder and unzip it
-    # http = urllib3.PoolManager(
-    #     cert_reqs='CERT_REQUIRED',
-    #     ca_certs=certifi.where())    
-    # session = requests.Session()
+    print('Downloading and unzipping seminar homework packages...')
+    userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36 Edg/81.0.416.64"
+    header = {
+        'User-Agent': userAgent,
+    }
+    session = requests.Session()
     for item in dbs.values():
-        #print(item)
-        res = requests.get(item.homeworkUrl,verify=False)
-        # res = session.get(item.homeworkUrl,verify = False)
-        # res = http.request('GET',item.homeworkUrl)
+        res = session.get(item.homeworkUrl,headers=header)
         if len(item.homeworkName) == 0:
             fileName = os.path.basename(item.homeworkUrl)
         else:

@@ -15,17 +15,22 @@ def bdschoolSeminars(grade,date):
     urlCurrentSchedule = 'https://alicache.bdschool.cn/public/bdschool/index/static/ali/w.html?grade={grade}'
     wday = date.tm_wday
     week_index = time.strftime("%U",date)
+    urlCurrentSchedule = urlCurrentSchedule.\
+        format(grade=grade,yyyyMMdd=time.strftime("%Y/%m/%d",date))
+
+    userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36 Edg/81.0.416.64"
+    header = {
+        'upgrade-insecure-requests': '1',
+        'User-Agent': userAgent,
+    }
 
     # http = urllib3.PoolManager(
     #     cert_reqs='CERT_REQUIRED',
     #     ca_certs=certifi.where())
-    # resp = http.request('GET',urlCurrentSchedule.format(grade=grade,yyyyMMdd=time.strftime("%Y/%m/%d",date)))
-    resp = requests.get(
-        url=urlCurrentSchedule.format(grade=grade,yyyyMMdd=time.strftime("%Y/%m/%d",date)),
-        verify = False)
-    # session = requests.Session()
-    # resp = session.post(urlCurrentSchedule.\
-    #     format(grade=grade,yyyyMMdd=time.strftime("%Y/%m/%d",date)))
+    session = requests.Session()
+    requests.packages.urllib3.disable_warnings()
+    resp = session.get(url = urlCurrentSchedule,\
+            headers=header,verify=False)
 
     if(resp.ok):
         resp.encoding='utf-8'
@@ -38,7 +43,6 @@ def bdschoolSeminars(grade,date):
     cellPath='//table[@class="content_table"][@grade="4"][@week_index="{week_index}"]\
         /tr[@class="content_table_tr"]/td[@class="content_table_td"]'.format(week_index=week_index)
     cells = html.xpath(cellPath)
-    print('Total cells:{}'.format(len(cells)))
     for idx,val in enumerate(cells):
         if idx%5 ==wday:
             if len(val.xpath('./div[@class="content_table_td_subject"]')) != 0 and \
