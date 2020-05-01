@@ -45,6 +45,7 @@ def fixIllegalPath(indexFilePath:str):
     return dir+'/'+os.path.basename(indexFilePath)
 
 def main():
+    print("中古友谊小学学生网课个人桌面 willswu@outlook.com")
     if not (os.path.exists('files') and os.path.isdir('files')):
         os.mkdir('files')
 
