@@ -32,9 +32,9 @@ def findTaskSheetPath(indexFilePath):
             i = readline.find(' ')
             readline = readline[i:].lstrip(' ')
             i = readline.find(' ')
-            readline = readline[i:].lstrip(' ')
+            readline = readline[i:].strip()
             return readline
-    raise Exception('Can not find task sheet fild path')
+    raise Exception('Can not find task sheet file path')
 
 def fixIllegalPath(indexFilePath:str):
     dir = os.path.dirname(indexFilePath)
