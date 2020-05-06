@@ -92,11 +92,19 @@ def main():
                 f.write(res.content)
         
         os.system('7z x -ofiles -aos "'+fileName+'" >>nul')
-        os.system('7z l "'+fileName+'" >"'+fileName+'.idx"')
 
-        #search for task sheet file path in idx file
+        #search for task sheet file path
+        #list archive content to a temp text file
+        os.system('7z l "'+fileName+'" >"'+fileName+'.idx"')
+        #search RegEx in the text file and extract the full path of it
         tasksheetPath = findTaskSheetPath(fileName+'.idx')
+        #clear the temp text file
+        os.remove(fileName+'.idx')
+
+        #if the last char in the dir path is '.', 7-zip will replace it to '_'
+        #so we need to fix this path 
         tasksheetPath = fixIllegalPath(tasksheetPath)
+        
         item.homeworkTaskSheet = 'files/'+tasksheetPath
     #Make a personal portal contains all seminars and student task sheet links from bdschool and xcschool
     mainpage = buildHtml(dbs.values())
