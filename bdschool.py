@@ -36,11 +36,25 @@ def bdschoolSeminars(grade,date):
 
     result ={}
 
-    cellPath='//table[@class="content_table"][@grade="4"][@week_index="{week_index}"]\
-        /tr[@class="content_table_tr"]/td[@class="content_table_td"]'.format(week_index=week_index)
+    #find col index for the given date param from ceil row
+    colIndex = wday
+    ceilPath = '//table[@class="content_table"][@grade="{grade}"][@week_index="{week_index}"]\
+        /tr[@class="content_table_tr ceil_bg_color"]/td[@class="content_table_td content_reset_colw"]'\
+            .format(grade=grade,week_index=week_index)
+    ceils=html.xpath(ceilPath)
+    targetText = time.strftime('%m{M}%d{D}',date).format(M='月',D='日')
+    for idx,val in enumerate(ceils):
+        if len(val.xpath('./div')) > 0 and \
+            val.xpath('./div')[0].text == targetText:
+            colIndex = idx
+
+    #process content table cells
+    cellPath='//table[@class="content_table"][@grade="{grade}"][@week_index="{week_index}"]\
+        /tr[@class="content_table_tr"]/td[@class="content_table_td"]'\
+            .format(grade=grade,week_index=week_index)
     cells = html.xpath(cellPath)
     for idx,val in enumerate(cells):
-        if idx%5 ==wday:
+        if idx%5 ==colIndex:
             if len(val.xpath('./div[@class="content_table_td_subject"]')) != 0 and \
                 len(val.xpath('./a[@class="content_table_td_title"]/span[@class="conten_table_td_span_title"]')) != 0:
                 subject = val.xpath('./div[@class="content_table_td_subject"]')[0].text
@@ -66,4 +80,4 @@ def bdschoolSeminars(grade,date):
 if __name__ == '__main__':
     grade =4
     date = time.localtime()
-    bdschoolSeminars(grade,date)
+    print(bdschoolSeminars(grade,date))
