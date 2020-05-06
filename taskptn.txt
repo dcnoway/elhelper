@@ -1,1 +1,1 @@
-任务单.(docx|pdf)
+(学习单.(docx|pdf))|(任务单.(docx|pdf))
