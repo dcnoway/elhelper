@@ -9,7 +9,7 @@ from xcschool import xcSchoolSeminars
 from buildhtm import buildHtml
 from buildhtm import htmlPath
 import re
-
+import urllib3
 
 def findTaskSheetPath(indexFilePath):
     #load GBK encoding pattern string from GBK encoding txt file
@@ -79,8 +79,9 @@ def main():
         'User-Agent': userAgent,
     }
     session = requests.Session()
+    urllib3.disable_warnings()
     for item in dbs.values():
-        res = session.get(item.homeworkUrl,headers=header)
+        res = session.get(item.homeworkUrl,headers=header,verify=False)
         if len(item.homeworkName) == 0:
             fileName = os.path.basename(item.homeworkUrl)
         else:
