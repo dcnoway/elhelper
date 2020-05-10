@@ -1,6 +1,6 @@
 # coding=utf-8
 import time
-import zipfile
+#import zipfile
 import requests
 import os
 import sys
@@ -10,8 +10,9 @@ from buildhtm import buildHtml
 from buildhtm import htmlPath
 import re
 import urllib3
+import platform
 
-def findTaskSheetPath(indexFilePath):
+def findTaskSheetPath(indexFilePath,isWindows=True):
     #load GBK encoding pattern string from GBK encoding txt file
     #for source code edit convinences
     with open('taskptn.txt','r') as f:
@@ -28,12 +29,22 @@ def findTaskSheetPath(indexFilePath):
         #find task sheet file path string pattern
         finded = re.findall(pattern,readline)
         if len(finded) > 0:
-            readline = readline[25:].lstrip(' ')
-            i = readline.find(' ')
-            readline = readline[i:].lstrip(' ')
-            i = readline.find(' ')
-            readline = readline[i:].strip()
-            return readline
+            if isWindows:
+                readline = readline[25:].lstrip(' ')
+                i = readline.find(' ')
+                readline = readline[i:].lstrip(' ')
+                i = readline.find(' ')
+                readline = readline[i:].strip()
+                return readline
+            else:
+                readline = readline.strip()
+                i = readline.find(' ')
+                readline = readline[i:].lstrip(' ')
+                i = readline.find(' ')
+                readline = readline[i:].lstrip(' ')
+                i = readline.find(' ')
+                readline = readline[i:].lstrip(' ')
+                return readline
     raise Exception('Can not find task sheet file path')
 
 def fixIllegalPath(indexFilePath:str):
@@ -46,6 +57,11 @@ def fixIllegalPath(indexFilePath:str):
 
 def main():
     print("中古友谊小学学生网课个人桌面 willswu@outlook.com")
+    isWindows =platform.system().startswith('Win')
+    isLinux = platform.system().startswith('Linux')
+    if not (isWindows or isLinux):
+        print('Running on a not supported OS!')
+        return 1
     if not (os.path.exists('files') and os.path.isdir('files')):
         os.mkdir('files')
 
@@ -53,9 +69,19 @@ def main():
         os.startfile(htmlPath())
         return 0
         
-    if os.system('7z>nul')!=0:
-        print('Please install 7-Zip and make sure 7z.exe is in the PATH.')
-        return 1
+    if isWindows:
+        if os.system('7z>nul')!=0:
+            print('Please install 7-Zip and make sure 7z.exe is in the PATH.')
+            return 1
+    elif isLinux:
+        if os.system('unzip')!=0 :
+            print('unzip is not exists!')
+            print('Installing unzip...')
+            if os.system('apt install unzip')!=0 :
+                print('unzip install fail!\n please run \'sudo apt install unzip\' manually.')
+                return 1
+            else :
+                print('unzip install succeed!')
         
     if len(sys.argv) <2:
         grade =4
@@ -92,23 +118,33 @@ def main():
             with open(fileName, 'wb') as f:
                 f.write(res.content)
         
-        if os.system('7z x -ofiles -aos "'+fileName+'" >>nul')!=0 :
-            print('Extract archive file error!')
-            return 1
+        #extract archive file
+        if isWindows:
+            if os.system('7z x -ofiles -aos "'+fileName+'" >>nul')!=0 :
+                print('Extract archive file error!')
+                return 1
+            #list archive content to a temp text file
+            if os.system('7z l "'+fileName+'" >"'+fileName+'.idx"')!=0 :
+                print('List archive content error!')
+                return 1                
+        elif isLinux:
+            if os.system('unzip -nq "'+fileName)!=0:
+                print('Extract archive file error')
+                return 1
+            #list archive content to a temp text file
+            if os.system('unzip -l "'+fileName+'" >"'+fileName+'.idx"')!=0 :
+                print('List archive content error!')
+                return 1                
 
-        #search for task sheet file path
-        #list archive content to a temp text file
-        if os.system('7z l "'+fileName+'" >"'+fileName+'.idx"')!=0 :
-            print('List archive content error!')
-            return 1
         #search RegEx in the text file and extract the full path of it
-        tasksheetPath = findTaskSheetPath(fileName+'.idx')
+        tasksheetPath = findTaskSheetPath(fileName+'.idx',isWindows)
         #clear the temp text file
         os.remove(fileName+'.idx')
 
         #if the last char in the dir path is '.', 7-zip will replace it to '_'
         #so we need to fix this path 
-        tasksheetPath = fixIllegalPath(tasksheetPath)
+        if isWindows:
+            tasksheetPath = fixIllegalPath(tasksheetPath)
         
         item.homeworkTaskSheet = 'files/'+tasksheetPath
     #Make a personal portal contains all seminars and student task sheet links from bdschool and xcschool
