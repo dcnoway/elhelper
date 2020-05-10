@@ -51,10 +51,11 @@ def main():
 
     if os.path.exists(htmlPath()) and os.path.isfile(htmlPath()):
         os.startfile(htmlPath())
-        return
+        return 0
         
     if os.system('7z>nul')!=0:
         print('Please install 7-Zip and make sure 7z.exe is in the PATH.')
+        return 1
         
     if len(sys.argv) <2:
         grade =4
@@ -91,11 +92,15 @@ def main():
             with open(fileName, 'wb') as f:
                 f.write(res.content)
         
-        os.system('7z x -ofiles -aos "'+fileName+'" >>nul')
+        if os.system('7z x -ofiles -aos "'+fileName+'" >>nul')!=0 :
+            print('Extract archive file error!')
+            return 1
 
         #search for task sheet file path
         #list archive content to a temp text file
-        os.system('7z l "'+fileName+'" >"'+fileName+'.idx"')
+        if os.system('7z l "'+fileName+'" >"'+fileName+'.idx"')!=0 :
+            print('List archive content error!')
+            return 1
         #search RegEx in the text file and extract the full path of it
         tasksheetPath = findTaskSheetPath(fileName+'.idx')
         #clear the temp text file
