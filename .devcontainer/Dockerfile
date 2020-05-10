@@ -41,6 +41,9 @@ RUN apt-get update \
     # Verify git, process tools, lsb-release (common in install instructions for CLIs) installed
     && apt-get -y install git openssh-client less iproute2 procps iproute2 lsb-release \
     #
+    # Install unzip
+    && apt-get -y install unzip \
+    #
     # Install pylint
     && /opt/conda/bin/pip install pylint \
     #
