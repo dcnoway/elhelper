@@ -15,7 +15,7 @@ import platform
 def findTaskSheetPath(indexFilePath,colIndex):
     #load GBK encoding pattern string from GBK encoding txt file
     #for source code edit convinences
-    with open('taskptn.txt','r') as f:
+    with open('taskptn.txt','r',encoding='GBK') as f:
         pattern = f.readline()
 
     passPtn = '__MACOSX'
@@ -143,7 +143,7 @@ def main():
         elif isLinux:
             _,ext = os.path.splitext(fileName)
             if ext == '.zip':
-                if os.system('unzip -nq "'+fileName+'"')!=0:
+                if os.system('unzip -nq "'+fileName+'" -d files')!=0:
                     print('Extract archive file error')
                     return 1
                 #list archive content to a temp text file
@@ -156,8 +156,10 @@ def main():
                 os.remove(fileName+'.idx')
                      
             elif ext == '.rar':
-                if os.system('unrar x -inul -o- "'+fileName+'"')!=0:
+                shcmd = 'unrar x -inul -o+ "'+fileName+'" files'
+                if os.system(shcmd)!=0:
                     print('Extract archive file error')
+                    print(shcmd)
                     return 1
                 #list archive content to a temp text file
                 if os.system('unrar l "'+fileName+'" >"'+fileName+'.idx"')!=0 :
