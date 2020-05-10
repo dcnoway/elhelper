@@ -74,7 +74,7 @@ def main():
             print('Please install 7-Zip and make sure 7z.exe is in the PATH.')
             return 1
     elif isLinux:
-        if os.system('unzip')!=0 :
+        if os.system('unzip>null')!=0 :
             print('unzip is not exists!')
             print('Installing unzip...')
             if os.system('apt install unzip')!=0 :
@@ -128,7 +128,7 @@ def main():
                 print('List archive content error!')
                 return 1                
         elif isLinux:
-            if os.system('unzip -nq "'+fileName)!=0:
+            if os.system('unzip -nq "'+fileName+'"')!=0:
                 print('Extract archive file error')
                 return 1
             #list archive content to a temp text file
