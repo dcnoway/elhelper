@@ -22,30 +22,39 @@ COPY environment.yml* .devcontainer/noop.txt /tmp/conda-tmp/
 
 #Add China mirrors for apt and pip to speedup the downloads
 #USER root
-RUN sed -i '1i\#Add China apt mirrors for speedup the apt downloads' /etc/apt/sources.list \
-	&& sed -i '1a\deb http://mirrors.aliyun.com/debian/ buster main non-free contrib' /etc/apt/sources.list \
-	&& sed -i '1a\deb http://mirrors.aliyun.com/debian-security buster/updates main' /etc/apt/sources.list \
-	&& sed -i '1a\deb http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib' /etc/apt/sources.list \
-	&& sed -i '1a\deb http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib' /etc/apt/sources.list \
+#RUN sed -i '1i\#Add China apt mirrors for speedup the apt downloads' /etc/apt/sources.list \
+#	&& sed -i '1a\deb http://mirrors.aliyun.com/debian/ buster main non-free contrib' /etc/apt/sources.list \
+#	&& sed -i '1a\deb http://mirrors.aliyun.com/debian-security buster/updates main' /etc/apt/sources.list \
+#	&& sed -i '1a\deb http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib' /etc/apt/sources.list \
+#	&& sed -i '1a\deb http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib' /etc/apt/sources.list \
+#    && mkdir ~/.pip \
+#	&& echo '[global]' > ~/.pip/pip.conf \
+#	&& echo 'index-url = https://pypi.tuna.tsinghua.edu.cn/simple' >>~/.pip/pip.conf \
+#	&& echo '[install]'>> ~/.pip/pip.conf \
+#	&& echo 'trusted-host = https://pypi.tuna.tsinghua.edu.cn' >> ~/.pip/pip.conf    
+#USER docker
+
+# Configure apt and install packages
+RUN echo 'deb http://mirrors.aliyun.com/debian/ buster main non-free contrib' > /etc/apt/sources.list \
+	&& echo 'deb http://mirrors.aliyun.com/debian-security buster/updates main' >> /etc/apt/sources.list \
+	&& echo 'deb http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib' >> /etc/apt/sources.list \
+	&& echo 'deb http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib' >> /etc/apt/sources.list \
     && mkdir ~/.pip \
 	&& echo '[global]' > ~/.pip/pip.conf \
 	&& echo 'index-url = https://pypi.tuna.tsinghua.edu.cn/simple' >>~/.pip/pip.conf \
 	&& echo '[install]'>> ~/.pip/pip.conf \
-	&& echo 'trusted-host = https://pypi.tuna.tsinghua.edu.cn' >> ~/.pip/pip.conf    
-#USER docker
-
-# Configure apt and install packages
-RUN apt-get update \
+	&& echo 'trusted-host = https://pypi.tuna.tsinghua.edu.cn' >> ~/.pip/pip.conf \	
+	&& apt-get update \
     && apt-get -y install --no-install-recommends apt-utils dialog 2>&1 \
     #
     # Verify git, process tools, lsb-release (common in install instructions for CLIs) installed
     && apt-get -y install git openssh-client less iproute2 procps iproute2 lsb-release \
     #
     # Install unzip
-    && apt-get -y install unzip \
+    && apt-get -y install unzip unrar\
     #
     # Install pylint
-    && /opt/conda/bin/pip install pylint \
+    && /opt/conda/bin/pip install pylint lxml\
     #
     # Update Python environment based on environment.yml (if present)
     && if [ -f "/tmp/conda-tmp/environment.yml" ]; then /opt/conda/bin/conda env update -n base -f /tmp/conda-tmp/environment.yml; fi \

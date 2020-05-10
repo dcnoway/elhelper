@@ -12,7 +12,7 @@ import re
 import urllib3
 import platform
 
-def findTaskSheetPath(indexFilePath,isWindows=True):
+def findTaskSheetPath(indexFilePath,colIndex):
     #load GBK encoding pattern string from GBK encoding txt file
     #for source code edit convinences
     with open('taskptn.txt','r') as f:
@@ -29,22 +29,28 @@ def findTaskSheetPath(indexFilePath,isWindows=True):
         #find task sheet file path string pattern
         finded = re.findall(pattern,readline)
         if len(finded) > 0:
-            if isWindows:
-                readline = readline[25:].lstrip(' ')
+            readline = readline.strip()
+            for _ in range(colIndex):
                 i = readline.find(' ')
                 readline = readline[i:].lstrip(' ')
-                i = readline.find(' ')
-                readline = readline[i:].strip()
-                return readline
-            else:
-                readline = readline.strip()
-                i = readline.find(' ')
-                readline = readline[i:].lstrip(' ')
-                i = readline.find(' ')
-                readline = readline[i:].lstrip(' ')
-                i = readline.find(' ')
-                readline = readline[i:].lstrip(' ')
-                return readline
+            return readline
+
+            # if isWindows:
+            #     readline = readline[25:].lstrip(' ')
+            #     i = readline.find(' ')
+            #     readline = readline[i:].lstrip(' ')
+            #     i = readline.find(' ')
+            #     readline = readline[i:].strip()
+            #     return readline
+            # else:
+            #     readline = readline.strip()
+            #     i = readline.find(' ')
+            #     readline = readline[i:].lstrip(' ')
+            #     i = readline.find(' ')
+            #     readline = readline[i:].lstrip(' ')
+            #     i = readline.find(' ')
+            #     readline = readline[i:].lstrip(' ')
+            #     return readline
     raise Exception('Can not find task sheet file path')
 
 def fixIllegalPath(indexFilePath:str):
@@ -74,14 +80,14 @@ def main():
             print('Please install 7-Zip and make sure 7z.exe is in the PATH.')
             return 1
     elif isLinux:
-        if os.system('unzip>null')!=0 :
+        if os.system('unzip>/dev/null')!=0 :
             print('unzip is not exists!')
-            print('Installing unzip...')
-            if os.system('apt install unzip')!=0 :
-                print('unzip install fail!\n please run \'sudo apt install unzip\' manually.')
-                return 1
-            else :
-                print('unzip install succeed!')
+            print('please run \'sudo apt install unzip\' manually.')
+            return 1
+        if os.system('unrar>/dev/null')!=0 :
+            print('unrar is not exists!')
+            print('please run \'sudo apt install unrar\' manually.')
+            return 1
         
     if len(sys.argv) <2:
         grade =4
@@ -126,25 +132,47 @@ def main():
             #list archive content to a temp text file
             if os.system('7z l "'+fileName+'" >"'+fileName+'.idx"')!=0 :
                 print('List archive content error!')
-                return 1                
+                return 1          
+            #search RegEx in the text file and extract the full path of it
+            tasksheetPath = findTaskSheetPath(fileName+'.idx',5)
+            #clear the temp text file
+            os.remove(fileName+'.idx')      
+            #if the last char in the dir path is '.', 7-zip will replace it to '_'
+            #so we need to fix this path 
+            tasksheetPath = fixIllegalPath(tasksheetPath)                                
         elif isLinux:
-            if os.system('unzip -nq "'+fileName+'"')!=0:
-                print('Extract archive file error')
+            _,ext = os.path.splitext(fileName)
+            if ext == '.zip':
+                if os.system('unzip -nq "'+fileName+'"')!=0:
+                    print('Extract archive file error')
+                    return 1
+                #list archive content to a temp text file
+                if os.system('unzip -l "'+fileName+'" >"'+fileName+'.idx"')!=0 :
+                    print('List archive content error!')
+                    return 1        
+                #search RegEx in the text file and extract the full path of it
+                tasksheetPath = findTaskSheetPath(fileName+'.idx',3)
+                #clear the temp text file
+                os.remove(fileName+'.idx')
+                     
+            elif ext == '.rar':
+                if os.system('unrar x -inul -o- "'+fileName+'"')!=0:
+                    print('Extract archive file error')
+                    return 1
+                #list archive content to a temp text file
+                if os.system('unrar l "'+fileName+'" >"'+fileName+'.idx"')!=0 :
+                    print('List archive content error!')
+                    return 1                   
+                #search RegEx in the text file and extract the full path of it
+                tasksheetPath = findTaskSheetPath(fileName+'.idx',4)
+                #clear the temp text file
+                os.remove(fileName+'.idx')   
+            else:
+                print("Unsupported archive format!")
                 return 1
-            #list archive content to a temp text file
-            if os.system('unzip -l "'+fileName+'" >"'+fileName+'.idx"')!=0 :
-                print('List archive content error!')
-                return 1                
-
-        #search RegEx in the text file and extract the full path of it
-        tasksheetPath = findTaskSheetPath(fileName+'.idx',isWindows)
-        #clear the temp text file
-        os.remove(fileName+'.idx')
-
-        #if the last char in the dir path is '.', 7-zip will replace it to '_'
-        #so we need to fix this path 
-        if isWindows:
-            tasksheetPath = fixIllegalPath(tasksheetPath)
+        else:
+            print("Unsupported OS!")
+            return 1
         
         item.homeworkTaskSheet = 'files/'+tasksheetPath
     #Make a personal portal contains all seminars and student task sheet links from bdschool and xcschool
