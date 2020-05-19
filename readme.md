@@ -1,4 +1,6 @@
-# 中古友谊小学四年级网课助手
+This tool was eprecated!
+China have almost beats the corona viruis down, we are back to normal life.
+So, say GodBye to quarantine and live classes.
 
 解决了淘气神兽们不想学习不写作业的以下借口
 
