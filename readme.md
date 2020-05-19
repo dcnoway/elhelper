@@ -1,8 +1,8 @@
 This tool was deprecated!
 
-China have almost beats the corona viruis down, we are back to normal life.
+China have almost beats the corona virus down, we are back to normal life.
 
-So, say GodBye to quarantine and live classes.
+So, say GoodBye to quarantine and live classes.
 
 解决了淘气神兽们不想学习不写作业的以下借口
 
